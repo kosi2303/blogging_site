@@ -4,11 +4,14 @@ const express = require('express')
 const blog_schema = require('./blog_schema')
 
 const app = express()
-mongoose.connect('mongodb+srv://MyFirstBlog:vZs0o6hON2A5i2ZP@nodeapps.izxa8u1.mongodb.net/blog')
+const mongodb = process.env.MONGODB || 'mongodb://localhost:27017/blog'
+// mongoose.connect('mongodb+srv://MyFirstBlog:vZs0o6hON2A5i2ZP@nodeapps.izxa8u1.mongodb.net/blog')
+mongoose.connect(mongodb)
 .then(()=>{
-    app.listen(3000, ()=>{
-        console.log("App started on port 3000");
-    })
+
+    console.log("Database Connected");
+    
+
 }).catch((err) => {
     console.log(err, "Database connection failed")
 })
@@ -32,10 +35,10 @@ app.post('/success', (req, res)=>{
     async function run(){
         const blogs = new blog_schema({
             name: details.username,
-            title: details.true,
+            title: details.title,
             body: details.body
         })
-        await blogs.save
+        await blogs.save()
     }
 
     res.render('success')
@@ -46,4 +49,10 @@ app.get('/blogs', async (req, res) => {
     const allPosts = await blog_schema.find()
 
     res.render('blogs', {posts: allPosts})
+})
+
+const port = process.env.PORT || 4000
+app.listen(port, ()=>{
+
+    console.log (`app started on port 4000 ${port}`)
 })
